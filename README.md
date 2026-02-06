@@ -16,6 +16,7 @@ Contents:
   - [Arrival rate, service rate](#arrival-rate-service-rate)
   - [Utilization ratio](#utilization-ratio)
   - [Throughput rates: success rate, failure rate, skip rate](#throughput-rates-success-rate-failure-rate-skip-rate)
+  - [Service rate disambiguation](#service-rate-disambiguation)
   - [Error ratio](#error-ratio)
   - [Skip rate](#skip-rate)
   - [Lead time, wait time, work time, step time](#lead-time-wait-time-work-time-step-time)
@@ -115,11 +116,11 @@ The most important notation:
 
 Examples:
 
-- λ = μ means the arrival rate equals the service rate; the queue is staying the same size, other than dropouts.
+- λ = μ means the arrival rate equals the service rate; the queue is staying the same size, other than skips a.k.a. dropouts.
 
-- λ > μ means the arrival rate is greater than the service rate; the queue is getting larger, other than dropouts.
+- λ > μ means the arrival rate is greater than the service rate; the queue is getting larger, other than skips a.k.a. dropouts.
 
-- λ < μ means the arrival rate is less than the service rate; the queue is getting smaller, other than dropouts.
+- λ < μ means the arrival rate is less than the service rate; the queue is getting smaller, other than skips a.k.a. dropouts.
 
 ### Utilization ratio a.k.a. traffic intensity
 
@@ -139,11 +140,42 @@ Examples:
 
 Throughput rates come in three broad categories:
 
-- α (alpha): success rate. This measures how many items turn out right.
+- χ (chi): total rate. This measures how many items per time exit the queue for any reason: success, failure, skip, etc.
 
-- β (beta): failure rate. This measures how many items turn out wrong a.k.a. errors.
+- α (alpha): success rate. This measures how many items per time period turn out right e.g. correct, complete, accepted.
 
-- σ (sigma): skip rate. This measures how many items skip out of the queue a.k.a. dropoups.
+- β (beta): failure rate. This measures how many items per time period turn out wrong e.g. incorrect, incomplete, rejected.
+
+- σ (sigma): skip rate. This measures how many items per time person skip the queue e.g. dropouts, abandonments, losses.
+
+For typical queueing theory, total rate = service rate + error rate + skip rate:
+
+- χ = α + β + σ (pronounced: chi equals alpha plus beta plus sigma)
+
+### Service rate disambiguation
+
+Depending on context and practitioner, the terminology "service rate" can mean either
+"total rate" or "success rate".
+
+This has historical roots and can lead to confusion and mistakes, epsecially for
+context and practitioners using queueing theory where there's a significant need
+to track failures and skips.
+
+- Theoretical View: The service rate is a pure measurement of speed (e.g., jobs per second), regardless of whether the jobs are succeses, failures, skips, etc.
+
+- Processing View: The service rate includes whatever the queue spends time processing, meaning successes or failures, but does not include not skips.
+
+- Technology View: In applied fields such as software engineering, the service rate measures only successes, whereas the error rate measures failures, and the skip rate measures dropouts.
+
+Therefore we prefer change from this terminology:
+
+- μ (mu): service rate. This measures how fast items in the queue are being handled.
+
+To this terminology:
+
+- χ (chi): total rate. This measures how many items per time exit the queue for any reason: success, failure, skip, etc.
+
+- α (alpha): success rate. This measures how many items per time period turn out right e.g. correct, complete, accepted.
 
 ### Skip rate
 
@@ -151,7 +183,7 @@ Skip rate details:
 
 - σ (sigma): skip rate. This measures how many items skip out the queue unhandled a.k.a. dropouts.
 
-A skip is when a item leaves the queue without any processing:
+A skip is when a item leaves the queue without any signficant processing:
 
 - Abandoning: when a customer starts a queue, then leaves, for any reason.
 
@@ -227,13 +259,13 @@ Examples:
 
 - Aλ: Activity arrival rate: how many items are incoming per time unit.
 
-- Aμ: Activity service rate: how many items are completed per time unit.
+- Aχ: Activity total rate: how many items out of the queue per time unit.
 
-- Aα: Activity success rate: how many items are right per time unit.
+- Aμ: Activity service rate a.k.a. success rate: how many items are right per time unit.
 
-- Aβ: Activity failure rate: how many items are wrong per time unit.
+- Aβ: Activity error rate a.k.a. failure rate: how many items are wrong per time unit.
 
-- Aσ: Activity skip rate: how many items are abandoned per time unit.
+- Aσ: Activity skip rate a.k.a. dropout rate: how many items are abandoned per time unit.
 
 - Aρ: Activity utilization ratio: how many items are arriving vs. completing.
 
