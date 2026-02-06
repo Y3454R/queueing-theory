@@ -11,11 +11,13 @@ Contents:
   - [Devops continuous deployment pipelines](#devops-continuous-deployment-pipelines)
 - [Queue terminology](#queue-terminology)
   - [Queue types and service types](#queue-types-and-service-types)
-  - [Queue dropouts](#queue-dropouts)
+  - [Queue skips](#queue-skips)
 - [Queueing theory notation](#queueing-theory-notation)
-  - [Arrival rate, service rate, dropout rate](#arrival-rate-service-rate-dropout-rate)
+  - [Arrival rate, service rate](#arrival-rate-service-rate)
   - [Utilization ratio](#utilization-ratio)
+  - [Throughput rates: success rate, failure rate, skip rate](#throughput-rates-success-rate-failure-rate-skip-rate)
   - [Error ratio](#error-ratio)
+  - [Skip rate](#skip-rate)
   - [Lead time, wait time, work time, step time](#lead-time-wait-time-work-time-step-time)
   - [Count](#count)
   - [Standard notation](#standard-notation)
@@ -83,16 +85,6 @@ Queue types and service types describe how the queue chooses which items to proc
 
 - Time Sharing: serve everyone at the same time; service capacity is distributed evenly among everyone waiting.
 
-### Queue dropouts
-
-Queue dropouts are when a customer does not make it through the queue.
-
-- Balking: when a customer decides not to start waiting for service because the wait time threatens to be too long.
-
-- Reneging: when a customer who has waited already decides to leave because they’ve wasted too much time.
-
-- Jockeying: when a customer switches between queues in a tandem queue system, trying to get a shorter wait.
-
 ## Queueing theory notation
 
 Queueing theory uses notation with Greek letters.
@@ -113,15 +105,13 @@ Example:
 
 - κ ≫ 100 means there are many more than 100 items in the queue.
 
-### Arrival rate, service rate, dropout rate
+### Arrival rate, service rate
 
 The most important notation:
 
 - λ (lambda): arrival rate. This measures how fast new items are coming into the queue.
 
 - μ (mu): service rate. This measures how fast items in the queue are being handled.
-
-- σ (sigma): dropout rate. This measures how fast items are skipping out the queue unhandled.
 
 Examples:
 
@@ -144,6 +134,32 @@ Examples:
 - ρ > 1 means the arrival rate is greater than the service rate; the queue is getting larger.
 
 - ρ < 1 means the arrival rate is less than the service rate; the queue is getting smaller.
+
+### Throughput rates: success rate, failure rate, skip rate
+
+Throughput rates come in three broad categories:
+
+- α (alpha): success rate. This measures how many items turn out right.
+
+- β (beta): failure rate. This measures how many items turn out wrong a.k.a. errors.
+
+- σ (sigma): skip rate. This measures how many items skip out of the queue a.k.a. dropoups.
+
+### Skip rate
+
+Skip rate details:
+
+- σ (sigma): skip rate. This measures how many items skip out the queue unhandled a.k.a. dropouts.
+
+A skip is when a item leaves the queue without any processing:
+
+- Abandoning: when a customer starts a queue, then leaves, for any reason.
+
+- Balking: when a customer decides not to start waiting for service because the wait time threatens to be too long.
+
+- Reneging: when a customer who has waited already decides to leave because they’ve wasted too much time.
+
+- Jockeying: when a customer switches between queues in a tandem queue system, trying to get a shorter wait.
 
 ### Error ratio
 
@@ -213,7 +229,11 @@ Examples:
 
 - Aμ: Activity service rate: how many items are completed per time unit.
 
-- Aσ: Activity dropout rate: how many items are abandoned per time unit.
+- Aα: Activity success rate: how many items are right per time unit.
+
+- Aβ: Activity failure rate: how many items are wrong per time unit.
+
+- Aσ: Activity skip rate: how many items are abandoned per time unit.
 
 - Aρ: Activity utilization ratio: how many items are arriving vs. completing.
 
