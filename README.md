@@ -1,6 +1,10 @@
 # Queueing theory
 
-Queueing theory is the mathematical study of waiting lines, or queues. We use queueing theory in our software development, for purposes such as analyzing and optimizing our practices and processes, such as our customer service responsiveness, project management kanban planning, inter-process communication message queues, and devops continuous deployment pipelines.
+Queueing theory is the mathematical study of waiting lines, or queues. We use
+queueing theory in our software development, for purposes such as analyzing and
+optimizing our practices and processes, such as our customer service
+responsiveness, project management kanban planning, inter-process communication
+message queues, and devops continuous deployment pipelines.
 
 Contents:
 
@@ -11,21 +15,27 @@ Contents:
   - [Devops continuous deployment pipelines](#devops-continuous-deployment-pipelines)
 - [Queue terminology](#queue-terminology)
   - [Queue types and service types](#queue-types-and-service-types)
-  - [Queue skips](#queue-skips)
 - [Queueing theory notation](#queueing-theory-notation)
-  - [Arrival rate, service rate](#arrival-rate-service-rate)
-  - [Utilization ratio](#utilization-ratio)
-  - [Throughput rates: success rate, failure rate, skip rate](#throughput-rates-success-rate-failure-rate-skip-rate)
-  - [Service rate disambiguation](#service-rate-disambiguation)
-  - [Error ratio](#error-ratio)
-  - [Skip rate](#skip-rate)
-  - [Lead time, wait time, work time, step time](#lead-time-wait-time-work-time-step-time)
   - [Count](#count)
+  - [Arrival rate, service rate](#arrival-rate-service-rate)
+  - [Utilization ratio a.k.a. traffic intensity](#utilization-ratio-aka-traffic-intensity)
+  - [Throughput rates: total rate, success rate, failure rate, skip rate](#throughput-rates-total-rate-success-rate-failure-rate-skip-rate)
+  - [Service rate disambiguation](#service-rate-disambiguation)
+  - [Skip rate](#skip-rate)
+  - [Error ratio](#error-ratio)
+  - [Lead time, step time, work time, wait time](#lead-time-step-time-work-time-wait-time)
   - [Standard notation](#standard-notation)
 - [Activity tracking](#activity-tracking)
   - [Activity examples](#activity-examples)
-  - [Little's Law](#little-s-law)
+  - [Little's Law](#littles-law)
   - [Key performance indicators (KPIs)](#key-performance-indicators-kpis)
+- [Service metrics](#service-metrics)
+  - [Mean Time To Respond, Repair, Recover, Resolve](#mean-time-to-respond-repair-recover-resolve)
+  - [DORA metrics](#dora-metrics)
+- [Queue of queues](#queue-of-queues)
+  - [Double Diamond queue of queues](#double-diamond-queue-of-queues)
+  - [Funnel queue of queues](#funnel-queue-of-queues)
+- [Insights](#insights)
 - [Epilog](#epilog)
   - [See also](#see-also)
   - [Thanks](#thanks)
@@ -114,13 +124,16 @@ The most important notation:
 
 - μ (mu): service rate. This measures how fast items in the queue are being handled.
 
-Examples:
+Examples of generalities for traditional queues:
 
-- λ = μ means the arrival rate equals the service rate; the queue is staying the same size, other than skips a.k.a. dropouts.
+- λ = μ means the arrival rate equals the service rate; the queue is staying the same size.
 
-- λ > μ means the arrival rate is greater than the service rate; the queue is getting larger, other than skips a.k.a. dropouts.
+- λ > μ means the arrival rate is greater than the service rate; the queue is getting larger.
 
-- λ < μ means the arrival rate is less than the service rate; the queue is getting smaller, other than skips a.k.a. dropouts.
+- λ < μ means the arrival rate is less than the service rate; the queue is getting smaller.
+
+Be aware that some queueing theory practitioners define service rate differently,
+and that service rate may be different due to failures such as errors or skips such as dropouts.
 
 ### Utilization ratio a.k.a. traffic intensity
 
@@ -136,9 +149,9 @@ Examples:
 
 - ρ < 1 means the arrival rate is less than the service rate; the queue is getting smaller.
 
-### Throughput rates: success rate, failure rate, skip rate
+### Throughput rates: total rate, success rate, failure rate, skip rate
 
-Throughput rates come in three broad categories:
+Throughput rates come in four broad categories:
 
 - χ (chi): total rate. This measures how many items per time exit the queue for any reason: success, failure, skip, etc.
 
@@ -317,7 +330,7 @@ We have built many projects, and we believe the most valuable summary indicators
 
 - Rτ = Restore lead time. Site reliability engineers may say "time to restore service" or "mean time to restore (MTTR)".
 
-### Service metrics
+## Service metrics
 
 Useful terms:
 
@@ -325,7 +338,7 @@ Useful terms:
 - **Service Level Objective (SLO):** the internal target for that metric (e.g., aim for 99.95% uptime)
 - **Service Level Agreement (SLA):** the formal, contractual promise to the customer (e.g., 99.9% uptime with penalties if missed).
 
-### Mean Time To Respond/Repair/Recover/Resolve
+### Mean Time To Respond, Repair, Recover, Resolve
 
 MTTR represents four different measurements:
 
@@ -372,7 +385,55 @@ DevOps Research and Assessment (DORA) metrics are industry standard key performa
 
 - **Mean Time to Recovery (MTTR)** - Time it takes to restore service after production failure. Be specific what you mean by recovery. For example, some teams count recovery as complete resolution meaning total time from when an incident is detected to when an incident is fully closed; this approach is better described as Mean Time To Resolve.
 
-- **Reliability** - A broader, often qualitative, assessment of service consistency. This metric helps show that high velocity does not come at the expense of system capabilty. Be specific what you mean by reliability. Some examples are availability, uptime, latency, accuracy, and service level objectives.
+- **Reliability** - A broader, often qualitative, assessment of service consistency. This metric helps show that high velocity does not come at the expense of system capability. Be specific what you mean by reliability. Some examples are availability, uptime, latency, accuracy, and service level objectives.
+
+## Queue of queues
+
+Queueing theory is easy to extend to a queue of queues, such a higher-level processes that contains lower-level stages, or phases, or gates.
+
+### Double Diamond queue of queues
+
+For example, consider the "Double Diamond" innovation process model, which specifies four stages:
+
+1. Discover: Understand the issue rather than merely assuming what it is.
+2. Define: With insight from the discovery phase, define the challenge.
+3. Develop: Give different answers to the clearly defined problem.
+4. Deliver: Test different solutions at a small scale then improve them.
+
+Queueing theory can model this as one process queue that contains four stage queues:
+
+- The arrival rate of of the process is the arrival rate of stage 1.
+- The success rate of of the process is the success rate of stage 4.
+- The error count of the process is the sum of the stages' error counts.
+- The skip count of the process is the sum of the stages' skip counts.
+
+### Funnel queue of queues
+
+In our practical work, we frequently use the word "funnel" to loosely describe a queue-of-queues that tend to reduce the item count at each stage:
+
+- Hiring queue that uses an outreach stage, interview stage, and offer stage. For this kind of queue, we aim to maximize the stage 1 arrival rate, meaning increasing our outreach, such as via promotions.
+
+- Purchasing queue that uses a customer search stage, shopping cart stage, and payment stage. For this kind of queue, we aim to minimize the stage 2 skip rate, meaning reducing cart abandonment, such a via reminders.
+
+- Programming queue that uses an integration stage, user acceptance stage, and production rollout stage. For this kind of queue, we aim to minimize the error rate of the production rollout stage, such as via canary telemetry.
+
+## Insights
+
+[Seven insights into queueing theory by Bob Wescott](seven-insights-into-queueing-theory-by-bob-wescott.pdf)
+
+1. The slower the service center, the lower the maximum utilization you should plan for at peak load.
+
+2. It’s very hard to use the last 15% of anything.
+
+3. The closer you are to the edge, the higher the price for being wrong.
+
+4. Response time increases are limited by the number that can wait.
+
+5. Remember this is an average, not a maximum.
+
+6. There is a human denial effect in multiple service centers.
+
+7. Show small improvements in their best light.
 
 ## Epilog
 
@@ -416,26 +477,17 @@ Introductions with more detail:
 
 - [Investopedia: Queueing theory](https://www.investopedia.com/terms/q/queuing-theory.asp)
 
-Blog posts:
-
 - [It's time for some queueing theory - By Kottke](https://kottke.org/19/01/its-time-for-some-queueing-theory)
-
-[Seven Insights Into Queueing Theory](http://www.treewhimsy.com/TECPB/Articles/SevenInsights.pdf):
-
-- The slower the service center, the lower the maximum utilization you should plan for at peak load.
-
-- It’s very hard to use the last 15% of anything.
-
-- The closer you are to the edge, the higher the price for being wrong.
-
-- Response time increases are limited by the number that can wait.
-
-- Remember this is an average, not a maximum.
-
-- There is a human denial effect in multiple service centers.
-
-- Show small improvements in their best light.
 
 ### Thanks
 
 [Accelerate: The Science of Lean Software and DevOps: Building and Scaling High Performing Technology Organizations. By Nicole Forsgren, Jez Humble, Gene Kim](https://www.amazon.com/dp/B07B9F83WM). This book is excellent for high level devops, and directly informs our choice of KPIs. The KPIs on this page align with the book's recommendations.
+
+## Tracking
+
+- Package: queueing-theory
+- Version: 2.0.0
+- Created: 2019-01-25T04:17:56Z
+- Updated: 2026-02-07T10:42:20Z
+- License: MIT or Apache-2.0 or GPL-2.0 or GPL-3.0 or contact us for more
+- Contact: Joel Parker Henderson <joel@joelparkerhenderson.com>
